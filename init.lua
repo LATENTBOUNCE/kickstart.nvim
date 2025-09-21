@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -168,6 +168,37 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+local keymap = vim.keymap.set
+
+-- Exit Insert and Visual Mode quickly
+keymap('i', 'hh', '<Esc>', { noremap = true })
+keymap('v', 'h', '<Esc>', { noremap = true })
+
+-- Colemak-DH Home Row Navigation
+keymap('n', 'n', 'h', { noremap = true })
+keymap('n', 'e', 'j', { noremap = true })
+keymap('n', 'i', 'k', { noremap = true })
+keymap('n', 'o', 'l', { noremap = true })
+
+-- Move commands from original n, e, i, o
+keymap('n', 'h', 'i', { noremap = true })
+keymap('n', 'j', 'o', { noremap = true })
+keymap('n', 'k', 'e', { noremap = true })
+keymap('n', 'l', 'n', { noremap = true })
+
+keymap('n', 'H', 'I', { noremap = true })
+keymap('n', 'J', 'O', { noremap = true })
+keymap('n', 'K', 'E', { noremap = true })
+keymap('n', 'L', 'N', { noremap = true })
+
+-- Swap ; and :
+keymap('n', ',', ';', { noremap = true })
+keymap('n', ';', ':', { noremap = true })
+
+-- <BS>a to 0, <BS>t to $
+keymap('n', '<BS>a', '0', { noremap = true })
+keymap('n', '<BS>t', '$', { noremap = true })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -282,6 +313,22 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+
+  {
+    'ggandor/leap.nvim',
+    config = function()
+      require('leap').set_default_mappings()
+
+      -- Exclude whitespace and the middle of alphabetic words from preview:
+      --   foobar[baaz] = quux
+      --   ^----^^^--^^-^-^--^
+      require('leap').opts.preview_filter = function(ch0, ch1, ch2)
+        return not (ch1:match '%s' or ch0:match '%a' and ch1:match '%a' and ch2:match '%a')
+      end
+
+      require('leap.user').set_repeat_keys('<enter>', '<backspace>')
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -671,7 +718,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -917,7 +964,7 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      -- require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
